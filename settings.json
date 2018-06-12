@@ -1,6 +1,8 @@
 {
-	"email_user":"",
-	"email_pw":"",
 	"cog_face_key":"",
-	"person_group_id":"234"
+	"person_group_id":"234",
+	"db_server":"",
+	"db":"",
+	"uid":"",
+	"pw":""
 }
