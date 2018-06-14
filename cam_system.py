@@ -3,11 +3,13 @@ import time
 import requests
 import pyodbc
 import db_access
+import os
 from picamera import PiCamera
 from os.path import expanduser
+from azure.storage.blob import BlockBlobService
 
 #PI ID
-floorplanid = 2
+floorplanid = 3
 
 with open('settings.json') as f:
     settings = json.load(f)
@@ -29,7 +31,7 @@ header_identify = {
 }
 
 # how long this runs for = approx. how many iterations * 3 seconds
-how_many_iterations = 1
+how_many_iterations = 10
 
 if __name__ == "__main__":
     camera = PiCamera()
@@ -40,17 +42,22 @@ if __name__ == "__main__":
     time.sleep(2)
 
     db = db_access.Db()
+
+    block_blob_service = BlockBlobService(settings['account_name'],settings['account_key'])
     
     for i in range(how_many_iterations):
         camera.capture('images/capture{}.jpg'.format(i))
+
+        local_path = os.path.expanduser("./images/")
+        local_file_name = 'capture{}.jpg'.format(i)
+        full_path_to_file = os.path.join(local_path,local_file_name)
+        
         img = open(expanduser('images/capture{}.jpg'.format(i)),'rb')
 
-        #######################################
-        #send image to Azure Blob storage here#
-        #update SQL database with new URL here#
-        #######################################
+        block_blob_service.create_blob_from_path(settings['container_name'],local_file_name, full_path_to_file)
 
-        #db.update_lounge_image(floorplanid,'New URL')
+        blob_url = block_blob_service.make_blob_url(settings['container_name'],local_file_name)
+        db.update_lounge_image(floorplanid,blob_url)
 
         #refresh lounge person database
         db.refresh_lounge_person(floorplanid)
