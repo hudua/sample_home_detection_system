@@ -3,7 +3,7 @@
 Here is how to run this on a new Raspberry Pi:
 - In settings.json, change the container accordingly
 - In cam_system.py, change the floorplanid accordinly
-- In cam_system.py, change number of iterations to be around 100. 100 iterations
+- In cam_system.py, change number of iterations to be around 100.
 
 100 iterations will take approximately 5 minutes (1 iteration = 1 image + processing time = 3 seconds to run)
 
